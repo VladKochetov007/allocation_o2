@@ -3,16 +3,14 @@ Example of using a custom Rust strategy for random weight allocation.
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
 import sys
-import os
 from pathlib import Path
 
 # Add the project root to the path to import the packages
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # Import the Python frontend package
-from python_frontend.allocation_o2 import create_allocator_class
+from allocation_o2 import create_allocator_class
 
 # Try to import the Rust module
 try:
@@ -74,37 +72,6 @@ def main():
     print(f"No seed, second call: {np.sum(weights2):.6f}")
     print(f"Seed=42, first call:  {np.sum(weights3):.6f}")
     print(f"Seed=42, second call: {np.sum(weights4):.6f}")
-    
-    # Plot the weights
-    plt.figure(figsize=(12, 8))
-    
-    plt.subplot(2, 2, 1)
-    plt.bar(range(n_assets), weights1)
-    plt.title("Random Weights (No Seed) - First Call")
-    plt.xlabel("Asset")
-    plt.ylabel("Weight")
-    
-    plt.subplot(2, 2, 2)
-    plt.bar(range(n_assets), weights2)
-    plt.title("Random Weights (No Seed) - Second Call")
-    plt.xlabel("Asset")
-    plt.ylabel("Weight")
-    
-    plt.subplot(2, 2, 3)
-    plt.bar(range(n_assets), weights3)
-    plt.title("Random Weights (Seed=42) - First Call")
-    plt.xlabel("Asset")
-    plt.ylabel("Weight")
-    
-    plt.subplot(2, 2, 4)
-    plt.bar(range(n_assets), weights4)
-    plt.title("Random Weights (Seed=42) - Second Call")
-    plt.xlabel("Asset")
-    plt.ylabel("Weight")
-    
-    plt.tight_layout()
-    plt.savefig("random_weights.png")
-    plt.show()
 
 if __name__ == "__main__":
     main() 
