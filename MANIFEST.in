@@ -6,7 +6,7 @@ include Makefile
 
 recursive-include allocation_o2 *.py *.so
 
-# Примеры не включаются в установку
+# Examples are not included in the installation
 # recursive-include examples *.py *.so
 
 global-exclude *.pyc
