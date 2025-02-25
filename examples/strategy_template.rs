@@ -61,16 +61,19 @@ impl AllocationStrategy for TemplateStrategy {
 impl TemplateStrategy {
     // Implementation of your allocation strategy
     fn predict_impl(&self, input: &ArrayD<f64>) -> ArrayD<f64> {
-        // Get number of assets from input shape
+        // Get shape information
         let shape = input.shape();
-        let n_assets = shape[0];
         
-        // Create array for weights
-        let mut weights = ArrayD::zeros(vec![n_assets]);
+        // For 2D arrays with shape [n_observations, n_assets]
+        let n_observations = shape[0];
+        let n_assets = shape[1];
+        
+        // Create output array with the same shape
+        let mut weights = ArrayD::zeros(vec![n_observations, n_assets]);
         
         // TODO: Implement your allocation strategy here
         
-        // For this template, we'll just use equal weights
+        // For this template, we'll use equal weights for each observation
         let equal_weight = 1.0 / n_assets as f64;
         for w in weights.iter_mut() {
             *w = equal_weight;
