@@ -1,4 +1,4 @@
-.PHONY: all clean build build_examples install develop test pip_install wheel test_install
+.PHONY: all clean build build_examples install test pip_install wheel
 
 # Default Python interpreter
 PYTHON ?= python
@@ -11,37 +11,23 @@ build:
 	cd rust_backend && cargo build --release
 	cp rust_backend/target/release/liballocation_o2.so allocation_o2/allocation_o2.so
 
-# Build examples (отдельно от основной библиотеки)
+# Build examples (separately from the main library)
 build_examples: build
 	cd rust_backend && cargo build --release --example random_weight_strategy
 	cp rust_backend/target/release/examples/librandom_weight_strategy.so examples/random_weight_strategy.so
 
-# Install the Python package in development mode (без примеров)
+# Install the Python package in development mode (without examples)
 install: build
 	$(PYTHON) -m pip install -e .
 
-# Development mode installation (alias for install)
-develop: build
-	$(PYTHON) -m pip install -e .
-
-# Install via pip from the setup.py (без примеров)
+# Install via pip from the setup.py (without examples)
 pip_install: build
 	$(PYTHON) -m pip install -e .
 
-# Build wheel package (без примеров)
+# Build wheel package (without examples)
 wheel: build
 	$(PYTHON) -m pip install --upgrade build
 	$(PYTHON) -m build --wheel
-
-# Test installation from wheel
-test_install: wheel
-	$(PYTHON) -m pip install --force-reinstall dist/allocation_o2-*.whl
-	$(PYTHON) test_install.py
-
-# Run tests
-test:
-	cd rust_backend && cargo test
-	$(PYTHON) -m pytest allocation_o2/tests
 
 # Clean build artifacts
 clean:
@@ -51,7 +37,3 @@ clean:
 	find . -name "__pycache__" -type d -exec rm -rf {} +
 	find . -name "*.pyc" -delete
 	rm -rf dist build *.egg-info
-
-# Run the random weight example (требует предварительной сборки примеров)
-run_random_example: build_examples
-	PYTHONPATH=. $(PYTHON) examples/random_weight_example.py
