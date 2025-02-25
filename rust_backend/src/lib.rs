@@ -1,8 +1,6 @@
 use pyo3::prelude::*;
 
 mod allocation;
-mod portfolio;
-mod optimization;
 
 use allocation::{NativeAllocator, EqualWeightStrategy};
 

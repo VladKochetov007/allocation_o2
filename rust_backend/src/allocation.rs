@@ -1,7 +1,6 @@
-use ndarray::{Array, ArrayD, Dimension, IxDyn};
+use ndarray::{Array, ArrayD, IxDyn};
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 pub mod strategies;
@@ -38,11 +37,14 @@ impl NativeAllocator {
         
         // Configure the strategy with parameters
         for (key, value) in config_map {
-            strategy_instance.setattr(py, key, value)?;
+            strategy_instance.setattr(py, key.as_str(), value)?;
         }
         
-        // Extract the Rust strategy from the Python wrapper
-        let strategy: Box<dyn AllocationStrategy> = strategy_instance.extract(py)?;
+        // For now, we'll just use the Python strategy directly
+        // In a real implementation, you would extract the strategy from Python
+        let strategy: Box<dyn AllocationStrategy> = Box::new(PyStrategy {
+            py_obj: strategy_instance,
+        });
         
         Ok(Self { strategy })
     }
@@ -72,7 +74,7 @@ impl NativeAllocator {
         let output_array = self.strategy.predict(&input_array);
         
         // Convert back to numpy array
-        let output_shape = output_array.shape();
+        let output_shape: Vec<usize> = output_array.shape().to_vec();
         let output_flat: Vec<f64> = output_array.into_raw_vec();
         
         // Create numpy array from flat data and reshape
@@ -84,5 +86,45 @@ impl NativeAllocator {
     
     fn __call__(&self, py: Python, input: &PyAny) -> PyResult<PyObject> {
         self.predict(py, input)
+    }
+}
+
+// Wrapper for Python strategy objects
+struct PyStrategy {
+    py_obj: PyObject,
+}
+
+impl AllocationStrategy for PyStrategy {
+    fn min_observations(&self) -> usize {
+        // Get min_observations from Python object
+        Python::with_gil(|py| {
+            self.py_obj.getattr(py, "min_observations")
+                .and_then(|attr| attr.extract::<usize>(py))
+                .unwrap_or(1)
+        })
+    }
+    
+    fn predict(&self, input: &ArrayD<f64>) -> ArrayD<f64> {
+        // Call predict method on Python object
+        Python::with_gil(|py| {
+            // Convert ndarray to numpy array
+            let numpy = py.import("numpy").unwrap();
+            let shape = input.shape().to_vec();
+            let flat_data = input.clone().into_raw_vec();
+            
+            // Create numpy array from flat data and reshape
+            let array = numpy.getattr("array").unwrap().call1((flat_data,)).unwrap();
+            let reshaped = array.getattr("reshape").unwrap().call1((shape,)).unwrap();
+            
+            // Call predict method
+            let result = self.py_obj.call_method1(py, "predict", (reshaped,)).unwrap();
+            
+            // Convert result back to ndarray
+            let result_array = result.extract::<&PyAny>(py).unwrap();
+            let result_shape: Vec<usize> = result_array.getattr("shape").unwrap().extract().unwrap();
+            let result_flat: Vec<f64> = result_array.getattr("ravel").unwrap().call0().unwrap().extract().unwrap();
+            
+            Array::from_shape_vec(IxDyn(&result_shape), result_flat).unwrap()
+        })
     }
 } 

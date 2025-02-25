@@ -1,4 +1,4 @@
-use ndarray::{ArrayD, Axis};
+use ndarray::ArrayD;
 use pyo3::prelude::*;
 use crate::allocation::AllocationStrategy;
 
@@ -12,7 +12,7 @@ pub struct EqualWeightStrategy {
 #[pymethods]
 impl EqualWeightStrategy {
     #[new]
-    fn new() -> Self {
+    pub fn new() -> Self {
         Self {
             min_observations: 1,
         }

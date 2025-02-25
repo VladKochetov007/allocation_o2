@@ -91,7 +91,12 @@ def create_allocator_class(
                 if param_name in kwargs:
                     value = kwargs[param_name]
                     # Type conversion if needed
-                    config[param_name] = param_type(value)
+                    if value is None:
+                        # If value is None, pass it directly without type conversion
+                        config[param_name] = None
+                    else:
+                        # Convert to the specified type
+                        config[param_name] = param_type(value)
                 elif default is not None:
                     config[param_name] = default
                 else:
