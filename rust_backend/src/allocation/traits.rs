@@ -12,9 +12,12 @@ pub trait AllocationStrategy: Send + Sync {
     /// Predict allocation weights based on input data
     /// 
     /// # Arguments
-    /// * `input` - Input array with shape [n_assets, n_features]
+    /// * `input` - Input array. Expected shape is typically [n_observations, n_assets],
+    ///   though implementations may support arbitrary dimensions as long as the assets
+    ///   dimension is correctly identified.
     /// 
     /// # Returns
-    /// * Array with shape [n_assets] containing weights that sum to 1.0
+    /// * Array with the same shape as input, containing weights that sum to 1.0
+    ///   along the assets dimension.
     fn predict(&self, input: &ArrayD<f64>) -> ArrayD<f64>;
 } 

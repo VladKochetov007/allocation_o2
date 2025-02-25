@@ -37,41 +37,29 @@ RandomWeightAllocator = create_allocator_class(
 
 def main():
     # Create simulated price data for 5 assets over 100 time steps
-    n_assets = 5
-    time_steps = 100
+    n_assets = 2
+    time_steps = 10
     
     # Generate random price data
     np.random.seed(42)  # For reproducibility
     prices = np.exp(np.cumsum(
-        np.random.normal(0.0005, 0.01, (n_assets, time_steps)), 
+        np.random.normal(0.0005, 0.01, (time_steps, n_assets)), 
         axis=1
     ))
     
     # Create allocator instances with different seeds
     # For the first allocator, we'll just skip the seed parameter to use the default None
     allocator1 = RandomWeightAllocator(seed=None)  # Random weights each time
-    allocator2 = RandomWeightAllocator(seed=42)  # Fixed seed for reproducibility
-    
     # Get weights for the assets
     weights1 = allocator1.predict(prices)
-    weights2 = allocator1.predict(prices)  # Different weights each time
-    weights3 = allocator2.predict(prices)
-    weights4 = allocator2.predict(prices)  # Same weights with fixed seed
-    
     # Print the weights
     print("\nRandom weights (no seed):")
     print(f"First call:  {weights1}")
-    print(f"Second call: {weights2}")
-    print("\nRandom weights (with seed=42):")
-    print(f"First call:  {weights3}")
-    print(f"Second call: {weights4}")
     
     # Verify that weights sum to 1.0
-    print(f"\nSum of weights (should be close to 1.0):")
-    print(f"No seed, first call:  {np.sum(weights1):.6f}")
-    print(f"No seed, second call: {np.sum(weights2):.6f}")
-    print(f"Seed=42, first call:  {np.sum(weights3):.6f}")
-    print(f"Seed=42, second call: {np.sum(weights4):.6f}")
+    print(f"\nSum of weights (should be all close to 1.0):")
+    sum_weights = np.sum(weights1, axis=1)
+    print(f"No seed, first call:  {sum_weights}")
 
 if __name__ == "__main__":
     main() 

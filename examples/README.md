@@ -40,8 +40,14 @@ The boilerplate for converting between Python/NumPy arrays and Rust ndarrays is 
 
 ### Input and Output Format
 
-- **Input**: A 2D array with shape `[n_assets, n_features]` where `n_assets` is the number of assets and `n_features` could be time steps, features, etc.
-- **Output**: A 1D array with shape `[n_assets]` containing portfolio weights that should sum to 1.0
+- **Input**: Typically a 2D array with shape `[n_observations, n_assets]` where:
+  - `n_observations` is the number of observation points or samples
+  - `n_assets` is the number of assets in the portfolio
+  - Arbitrary dimensions are supported as long as the assets dimension is correctly identified
+  
+- **Output**: Returns an array with the same shape as the input, where weights sum to 1.0 along the assets dimension:
+  - For 2D input: Returns shape `[n_observations, n_assets]` where each row is a separate allocation
+  - For 1D input (backward compatibility): Returns shape `[n_assets]` containing single portfolio weights
 
 ## Using Your Strategy from Python
 
