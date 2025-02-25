@@ -1,6 +1,6 @@
 use ndarray::ArrayD;
 use pyo3::prelude::*;
-use crate::allocation::AllocationStrategy;
+use crate::allocation::traits::AllocationStrategy;
 
 /// Example equal weight strategy
 #[pyclass]

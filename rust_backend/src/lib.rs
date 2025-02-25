@@ -1,6 +1,6 @@
 use pyo3::prelude::*;
 
-mod allocation;
+pub mod allocation;
 
 use allocation::{NativeAllocator, EqualWeightStrategy};
 

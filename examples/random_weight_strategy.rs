@@ -4,6 +4,11 @@ use rand::distributions::{Distribution, Uniform};
 use rand::rngs::StdRng;
 use rand::SeedableRng;
 
+// Import from allocation_o2
+use allocation_o2::allocation::traits::AllocationStrategy;
+use allocation_o2::register_strategy;
+use allocation_o2::allocation::py_bindings::{numpy_to_ndarray, ndarray_to_numpy};
+
 /// Strategy that returns random weights
 #[pyclass]
 pub struct RandomWeightStrategy {
@@ -24,36 +29,28 @@ impl RandomWeightStrategy {
         }
     }
     
+    /// Predict allocation weights based on input data
     fn predict(&self, py: Python, input: &PyAny) -> PyResult<PyObject> {
-        // Convert numpy array to ndarray
-        let numpy = py.import("numpy")?;
-        let array: &PyAny = numpy.getattr("asarray")?.call1((input,))?;
-        let array_f64 = array.getattr("astype")?.call1((numpy.getattr("float64")?,))?;
+        // Convert Python/NumPy data to ndarray
+        let input_array = numpy_to_ndarray(py, input)?;
         
-        // Get array shape and data
-        let shape: Vec<usize> = array_f64.getattr("shape")?.extract()?;
-        let flat_data: Vec<f64> = array_f64.getattr("ravel")?.call0()?.extract()?;
-        
-        // Create ndarray
-        let input_array = ndarray::Array::from_shape_vec(ndarray::IxDyn(&shape), flat_data)
-            .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("Failed to create ndarray: {}", e)))?;
-        
-        // Generate random weights
+        // Call the implementation
         let output_array = self.generate_random_weights(&input_array);
         
-        // Convert back to numpy array
-        let output_shape: Vec<usize> = output_array.shape().to_vec();
-        let output_flat: Vec<f64> = output_array.into_raw_vec();
-        
-        // Create numpy array from flat data and reshape
-        let output_np = numpy.getattr("array")?.call1((output_flat,))?;
-        let reshaped = output_np.getattr("reshape")?.call1((output_shape,))?;
-        
-        Ok(reshaped.into())
+        // Convert back to Python/NumPy
+        ndarray_to_numpy(py, output_array)
+    }
+}
+
+// Implement the AllocationStrategy trait for RandomWeightStrategy
+impl AllocationStrategy for RandomWeightStrategy {
+    fn min_observations(&self) -> usize {
+        self.min_observations
     }
     
-    fn __call__(&self, py: Python, input: &PyAny) -> PyResult<PyObject> {
-        self.predict(py, input)
+    // Predict function that works directly with ndarray
+    fn predict(&self, input: &ArrayD<f64>) -> ArrayD<f64> {
+        self.generate_random_weights(input)
     }
 }
 
@@ -104,6 +101,7 @@ impl RandomWeightStrategy {
 // Register the module with Python
 #[pymodule]
 fn random_weight_strategy(_py: Python, m: &PyModule) -> PyResult<()> {
-    m.add_class::<RandomWeightStrategy>()?;
+    // Use the register_strategy macro
+    register_strategy!(m, RandomWeightStrategy);
     Ok(())
 } 
