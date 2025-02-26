@@ -38,7 +38,7 @@ The project consists of two main parts:
 Clone the repository and install:
 
 ```bash
-git clone https://github.com/yourusername/AllocationO2.git
+git clone https://github.com/VladKochetov007/allocation_o2
 cd AllocationO2
 make pip_install
 ```
