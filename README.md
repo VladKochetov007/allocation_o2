@@ -13,17 +13,12 @@ The project consists of two main parts:
 2. **Python Package** (`allocation_o2/`): Python interface using PyO3
    - User-friendly API for Python users
    - Data visualization and analysis
-   - Integration with data sources
 
 ## Features
 
 - High-performance asset allocation strategies implemented in Rust
-- Pythonic interface for easy integration with data science workflows
-- Support for various allocation strategies:
-  - Equal Weight
-  - Random Weight (with optional seed for reproducibility)
-  - More strategies coming soon...
 - Ability to compile custom Rust strategy files
+- Pythonic interface for easy integration with data science workflows
 
 ## Installation
 
@@ -41,6 +36,12 @@ Clone the repository and install:
 git clone https://github.com/VladKochetov007/allocation_o2
 cd AllocationO2
 make install
+```
+
+### From PyPI
+
+```bash
+pip install allocation-o2
 ```
 
 ### Development Mode
