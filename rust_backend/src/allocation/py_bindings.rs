@@ -22,13 +22,17 @@ impl NativeAllocator {
             HashMap::new()
         };
         
-        // Create strategy instance by calling the Python class
-        let strategy_instance = strategy_class.call0(py)?;
-        
-        // Configure the strategy with parameters
-        for (key, value) in config_map {
-            strategy_instance.setattr(py, key.as_str(), value)?;
-        }
+        // Create strategy instance by calling the Python class with config parameters
+        let strategy_instance = if !config_map.is_empty() {
+            // Create a new dictionary for constructor arguments
+            let kwargs = PyDict::new(py);
+            for (key, value) in &config_map {
+                kwargs.set_item(key.as_str(), value.clone_ref(py))?;
+            }
+            strategy_class.call(py, (), Some(kwargs))?
+        } else {
+            strategy_class.call0(py)?
+        };
         
         // For now, we'll just use the Python strategy directly
         // In a real implementation, you would extract the strategy from Python

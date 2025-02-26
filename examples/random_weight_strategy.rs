@@ -22,10 +22,10 @@ pub struct RandomWeightStrategy {
 #[pymethods]
 impl RandomWeightStrategy {
     #[new]
-    fn new() -> Self {
+    fn new(seed: Option<u64>, min_observations: Option<usize>) -> Self {
         Self {
-            min_observations: 1,
-            seed: None,
+            min_observations: min_observations.unwrap_or(1),
+            seed,
         }
     }
     

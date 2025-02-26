@@ -26,3 +26,14 @@ name = "template_strategy"
 path = "../examples/strategy_template.rs"
 crate-type = ["cdylib"]
 
+[[example]]
+name = "random_weight_strategy"
+path = "../examples/random_weight_strategy.rs"
+crate-type = ["cdylib"]
+
+
+
+
+
+
+
