@@ -190,7 +190,7 @@ Examples are not included in the package installation and should be created by t
 
 ```bash
 # Run random weight example (only from source code)
-make run_random_example
+make build_examples
 ```
 
 ## Creating a wheel package
