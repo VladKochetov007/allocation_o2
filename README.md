@@ -59,17 +59,17 @@ make develop
 import numpy as np
 from allocation_o2 import create_allocator_class
 
-# Создайте свою стратегию аллокации
+# Create your own allocation strategy
 class MyAllocationStrategy:
     def __init__(self):
         self.min_observations = 1
         
     def predict(self, prices):
-        # Ваша логика аллокации
+        # Your allocation strategy logic here
         n_assets = prices.shape[0]
         return np.ones(n_assets) / n_assets
 
-# Создайте класс аллокатора
+# Create your own allocation strategy
 MyAllocator = create_allocator_class(
     MyAllocationStrategy,
     param_info={
@@ -77,15 +77,15 @@ MyAllocator = create_allocator_class(
     }
 )
 
-# Создайте экземпляр аллокатора
+# Create an allocator instance
 allocator = MyAllocator()
 
-# Сгенерируйте данные цен
-prices = np.random.random((5, 100))  # 5 активов, 100 временных шагов
+# Generate price data
+prices = np.random.random((5, 100))  # 5 assets, 100 time steps
 
-# Получите веса аллокации
+# Get allocation weights
 weights = allocator.predict(prices)
-print(weights)  # Массив весов, сумма которых равна 1.0
+print(weights)  # Array of weights, sum of which equals 1.0
 ```
 
 ### Custom Rust Strategies
