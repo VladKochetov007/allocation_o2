@@ -84,8 +84,12 @@ ndarray = "0.15.6"
                 output_path = source_path.parent / f"lib{strategy_name}.so"
             else:
                 output_path = Path(output_path)
-                if output_path.is_dir():
+                # If output_path is a directory, use the default file name inside it
+                if output_path.exists() and output_path.is_dir():
                     output_path = output_path / f"lib{strategy_name}.so"
+                # Otherwise, use the provided path directly, ensuring parent directories exist
+                else:
+                    os.makedirs(output_path.parent, exist_ok=True)
             
             # Copy the compiled .so file to the output location
             compiled_path = temp_project_dir / "target" / "release" / "libstrategy.so"
@@ -146,8 +150,12 @@ crate-type = ["cdylib"]
                 output_path = source_path.parent / f"lib{strategy_name}.so"
             else:
                 output_path = Path(output_path)
-                if output_path.is_dir():
+                # If output_path is a directory, use the default file name inside it
+                if output_path.exists() and output_path.is_dir():
                     output_path = output_path / f"lib{strategy_name}.so"
+                # Otherwise, use the provided path directly, ensuring parent directories exist
+                else:
+                    os.makedirs(output_path.parent, exist_ok=True)
             
             # Copy the compiled .so file to the output location
             compiled_path = rust_backend_dir / "target" / "release" / "examples" / f"lib{strategy_name}.so"
