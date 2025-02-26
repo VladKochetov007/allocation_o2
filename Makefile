@@ -1,4 +1,4 @@
-.PHONY: all clean build build_examples install test pip_install wheel
+.PHONY: all clean build build_examples install test pip_install wheel compile_strategy run_momentum_example
 
 # Default Python interpreter
 PYTHON ?= python
@@ -15,6 +15,22 @@ build:
 build_examples: build
 	cd rust_backend && cargo build --release --example random_weight_strategy
 	cp rust_backend/target/release/examples/librandom_weight_strategy.so examples/random_weight_strategy.so
+
+# Compile a custom strategy file
+compile_strategy:
+	@echo "Usage: make compile_strategy STRATEGY=path/to/strategy.rs [OUTPUT=path/to/output]"
+ifdef STRATEGY
+	$(PYTHON) -m allocation_o2 compile $(STRATEGY) $(if $(OUTPUT),-o $(OUTPUT),)
+else
+	@echo "Error: STRATEGY parameter is required"
+	@echo "Example: make compile_strategy STRATEGY=path/to/strategy.rs"
+	@exit 1
+endif
+
+# Run momentum example
+run_momentum_example: build
+	$(PYTHON) -m allocation_o2 compile examples/momentum_strategy.rs
+	$(PYTHON) examples/momentum_example.py
 
 # Install the Python package in development mode (without examples)
 install: build

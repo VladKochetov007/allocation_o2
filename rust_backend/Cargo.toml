@@ -20,12 +20,9 @@ rand = "0.8.5"
 [dev-dependencies]
 rstest = "0.18.1"
 
-[[example]]
-name = "random_weight_strategy"
-path = "../examples/random_weight_strategy.rs"
-crate-type = ["cdylib"]
 
 [[example]]
 name = "template_strategy"
 path = "../examples/strategy_template.rs"
 crate-type = ["cdylib"]
+
