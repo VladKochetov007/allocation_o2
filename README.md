@@ -182,6 +182,7 @@ fn my_custom_strategy(_py: Python, m: &PyModule) -> PyResult<()> {
     register_strategy!(m, MyCustomStrategy);
     Ok(())
 }
+```
 
 ### Examples
 
