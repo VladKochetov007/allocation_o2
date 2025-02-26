@@ -31,10 +31,6 @@ endif
 install: build
 	$(PYTHON) -m pip install -e .
 
-# Install via pip from the setup.py (without examples)
-pip_install: build
-	$(PYTHON) -m pip install -e .
-
 # Build wheel package (without examples)
 wheel: build
 	$(PYTHON) -m pip install --upgrade build
