@@ -27,11 +27,6 @@ else
 	@exit 1
 endif
 
-# Run momentum example
-run_momentum_example: build
-	$(PYTHON) -m allocation_o2 compile examples/momentum_strategy.rs
-	$(PYTHON) examples/momentum_example.py
-
 # Install the Python package in development mode (without examples)
 install: build
 	$(PYTHON) -m pip install -e .
