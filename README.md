@@ -100,12 +100,6 @@ Use the command line interface to compile your custom Rust strategy:
 python -m allocation_o2 compile path/to/your_strategy.rs
 ```
 
-Or use the Makefile:
-
-```bash
-make compile_strategy STRATEGY=path/to/your_strategy.rs
-```
-
 This will compile your Rust file into a shared library (.so) and place it in the same directory. You can specify an alternative output location:
 
 ```bash
