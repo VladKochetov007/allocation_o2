@@ -58,16 +58,18 @@ make develop
 
 ```python
 import numpy as np
+from numpy.typing import NDArray
 from allocation_o2 import create_allocator_class
 
 # Create your own allocation strategy
 class MyAllocationStrategy:
-    def __init__(self):
-        self.min_observations = 1
+    @property
+    def min_observations(self) -> int:
+        return 1
         
-    def predict(self, prices):
+    def predict(self, x: NDArray[np.float64]) -> NDArray[np.float64]:
         # Your allocation strategy logic here
-        n_assets = prices.shape[0]
+        n_assets = x.shape[0]
         return np.ones(n_assets) / n_assets
 
 # Create your own allocation strategy

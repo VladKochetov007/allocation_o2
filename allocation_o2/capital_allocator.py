@@ -23,8 +23,10 @@ class CapitalAllocator(ABC):
         Args:
             - `x` (np.ndarray): Array of data. shape: `(batch_size, >=min_observations, *n_information)` \
                 `n_information` is number of features. Usually `n_information` = `n_tradable`
+
         Returns:
-            np.ndarray: Array of predicted weights. shape: `(batch_size, n_tradable)`. Sum of each abs(row) is 1
+            np.ndarray: Array of predicted weights. shape: `(batch_size, n_tradable)`. 
+            Sum of each abs(row) <= 1
         """
         pass
 
