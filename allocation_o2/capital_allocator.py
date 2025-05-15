@@ -4,8 +4,6 @@ Capital allocation models abstract base class.
 
 from abc import ABC, abstractmethod
 import copy
-from numpy.typing import NDArray
-import numpy as np
 
 
 class CapitalAllocator(ABC):
@@ -16,16 +14,20 @@ class CapitalAllocator(ABC):
     """
     
     @abstractmethod
-    def predict(self, x: NDArray[np.float64]) -> NDArray[np.float64]:
+    def predict(self, x):
         """
         Predict allocation weights based on input data.
 
         Args:
-            - `x` (np.ndarray): Array of data. shape: `(>=min_observations, *n_information)` \
-                `n_information` is number of features. Usually `n_information` = `n_tradable`
+            - `x` (np.ndarray | pd.DataFrame | torch.Tensor): Array of data. 
+                shape: `(>=min_observations, *n_information)`
+                `n_information` is number of features. 
+                Usually `n_information` = `n_tradable`
+
         Returns:
-            np.ndarray: Array of predicted weights. shape: `(time_steps, n_tradable)` where time_steps matches input. 
-                Sum of each abs(row) is 1.
+            (np.ndarray | pd.DataFrame | torch.Tensor): Array of predicted weights.
+            shape: `(time_steps, n_tradable)` where time_steps matches input. 
+            Sum of each abs(row) is 1.
         """
         pass
 
@@ -40,11 +42,11 @@ class CapitalAllocator(ABC):
         """
         ...
 
-    def __call__(self, x: NDArray[np.float64]) -> NDArray[np.float64]:
+    def __call__(self, x):
         return self.predict(x)
     
     def __mul__(self, other: float) -> 'CapitalAllocator':
-        def model_prediction(x: NDArray[np.float64]) -> NDArray[np.float64]:
+        def model_prediction(x):
             return self.predict(x) * other
         model = copy.deepcopy(self)
         model.predict = model_prediction
@@ -60,7 +62,7 @@ class CapitalAllocator(ABC):
         return self * (1 / other)
     
     def __neg__(self) -> 'CapitalAllocator':
-        def model_prediction(x: NDArray[np.float64]) -> NDArray[np.float64]:
+        def model_prediction(x):
             return -self.predict(x)
         model = copy.deepcopy(self)
         model.predict = model_prediction
